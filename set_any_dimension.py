@@ -29,13 +29,11 @@ def makeset(card1,card2):
     
     for i in range(dimension):
         used_elements = set()
-        current1 = card1.attributes[i] 
-        current2 = card2.attributes[i]
-        used_elements.add(current2)   
-        used_elements.add(current1)
+        used_elements.add(card1.attributes[i])   
+        used_elements.add(card2.attributes[i])
     
         if len(used_elements) == 1:
-             attributes.append(current1)
+             attributes.append(card1.attributes[i])
         else:
             attributes.append((set.difference(masterset, used_elements).pop()))
     
@@ -45,23 +43,30 @@ def makeset(card1,card2):
 #CHANGES: made more concise
 def issuperset(card1,card2,card3,card4):
     '''detemines whether the four cards are a superset'''
-    if makeset(card1,card2).attributes == makeset(card3,card4).attributes\
-    or makeset(card2,card3).attributes == makeset(card1,card4).attributes\
-    or makeset(card1,card3).attributes == makeset(card2,card4).attributes:
-        return True
+    for i in range(1,4):
+        cards = [card1, card2, card3, card4]
+        set1 = makeset(cards[0], cards.pop(i)).attributes
+        set2 = makeset(cards.pop(), cards.pop()).attributes
+        if set1 == set2:
+            return True
     return False
        
 #Changes: list comprehension
 def settype((card1,card2,card3)):
     '''a function to determine the number of differences in a given set'''
     assert isset(card1,card2,card3) is True
-    numdiffs=0
-    for i in range(len(card1.attributes)):
-        if card1.attributes[i]!=card2.attributes[i]:
-            numdiffs+=1
+    
+    numdiffs = sum([card1.attributes[i]!=card2.attributes[i] \
+            for i in range(len(card1.attributes))])
+
     return numdiffs
     
-'''TODO: find a way to generate these on demand (lazy) instead of writing them as seperate functions'''
+#TODO: find a way to generate these on demand (lazy) instead of writing them as seperate functions
+
+"""def get_master_cl(dim):
+    for i in range (3):
+        if dim == 0:
+            mastercardlist.append("""
 
 def twodmastercardlist():
     '''creates a list of all nine two-dimensional cards'''
