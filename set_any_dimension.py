@@ -4,17 +4,16 @@ import random
 
 ## this is set up to play setgames of different types corresponding to different numbers of card attributes or different 'dimensions'
 
-class card(object):
+class Card(object):
     def __init__(self,attributes):
-        '''attributes is a tuple of length=card dimension'''
+        '''Attributes is a tuple of length=card dimension. Each attribute contains 0-2, 
+        characteristic of that attribute'''
         self.attributes = attributes
     def getdimension(self):
         return len(self.attributes)
-    def printcard(self):
-        return self.attributes
 
 def isset(card1,card2,card3):
-    '''determines if the three given cards are a set'''
+    '''Determines if the three given cards are a set.'''
     ans=0
     for i in range(len(card1.attributes)):
         if (card1.attributes[i]+card2.attributes[i]+card3.attributes[i])%3==0:
@@ -22,7 +21,7 @@ def isset(card1,card2,card3):
     return ans==len(card1.attributes)
     
 def makeset(card1,card2):
-    '''given two cards, determine the card needed to make a set'''
+    '''Given two cards, determine the card needed to make a set.'''
     dimension = card1.getdimension()
     attributes = []
     
@@ -39,13 +38,11 @@ def makeset(card1,card2):
              attributes.append(current1)
         else:
             attributes.append((set.difference(masterset, used_elements).pop()))
-
-        
-    card3 = card(attributes)
+    
+    card3 = Card(attributes)
     return card3    
             
-    
-    
+#CHANGES: made more concise
 def issuperset(card1,card2,card3,card4):
     '''detemines whether the four cards are a superset'''
     if makeset(card1,card2).attributes == makeset(card3,card4).attributes\
@@ -54,7 +51,7 @@ def issuperset(card1,card2,card3,card4):
         return True
     return False
        
-
+#Changes: list comprehension
 def settype((card1,card2,card3)):
     '''a function to determine the number of differences in a given set'''
     assert isset(card1,card2,card3) is True
@@ -71,7 +68,7 @@ def twodmastercardlist():
     mastercardlist=[]
     for i in range(3):
         for j in range(3):
-            mastercardlist.append(card((i,j)))
+            mastercardlist.append(Card((i,j)))
     return mastercardlist
 
   
@@ -83,7 +80,7 @@ def threedmastercardlist():
         for j in range(3):
             for t in range(3):
             
-                threedmastercardlist+=[card((i,j,t)),]
+                threedmastercardlist+=[Card((i,j,t)),]
     return threedmastercardlist
 
 def fourdmastercardlist():
@@ -93,7 +90,7 @@ def fourdmastercardlist():
             for j in range(3):
                 for t in range(3):
                     for n in range(3):
-                        fourdmastercardlist+=[card((n,t,j,i)),]
+                        fourdmastercardlist+=[Card((n,t,j,i)),]
     #random.shuffle(fourdmastercardtuple)
     return fourdmastercardlist
 
@@ -111,7 +108,7 @@ def reversecardmapping(num):
     att2 = (num - 27) / 9
     att1 = (num - 27 - 9) / 3
     att0 = (num - 27 - 9 - 3) 
-    return card([att0,att1,att2,att3])
+    return Card([att0,att1,att2,att3])
 
 ## build the image list mapping for the web game
 '''TODO: Have each card be able to get its own image src'''
