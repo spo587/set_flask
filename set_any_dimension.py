@@ -1,160 +1,32 @@
 import math
 import random
+import card_functions_set as c
 
 
 ## this is set up to play setgames of different types corresponding to different numbers of card attributes or different 'dimensions'
 
-class card(object):
-    def __init__(self,attributes):
-        '''attributes is a tuple of length=card dimension'''
-        self.attributes = attributes
-    def getdimension(self):
-        return len(self.attributes)
-    def printcard(self):
-        return self.attributes
+    
+#TODO: find a way to generate these on demand (lazy) instead of writing them as seperate functions
 
-def isset(card1,card2,card3):
-    '''determines if the three given cards are a set'''
-    ans=0
-    for i in range(len(card1.attributes)):
-        if (card1.attributes[i]+card2.attributes[i]+card3.attributes[i])%3==0:
-            ans+=1
-    return ans==len(card1.attributes)
-    
-def makeset(card1,card2):
-    '''given two cards, determine the card needed to make a set'''
-    dimension = card1.getdimension()
-    attributes = []
-    
-    masterset = set([0, 1, 2])
-    
-    for i in range(dimension):
-        used_elements = set()
-        current1 = card1.attributes[i] 
-        current2 = card2.attributes[i]
-        used_elements.add(current2)   
-        used_elements.add(current1)
-    
-        if len(used_elements) == 1:
-             attributes.append(current1)
+
+
+def master_list(dim, indices):
+    former_indices = indices
+    ret = []
+    for i in range(3):
+        indices = former_indices + (i,)
+        if dim == 1:
+            ret += [c.Card(indices)]
         else:
-            attributes.append((set.difference(masterset, used_elements).pop()))
+            ret += master_list(dim-1, indices)
+    return ret
 
-        
-    card3 = card(attributes)
-    return card3    
-            
-    
-    
-def issuperset(card1,card2,card3,card4):
-    '''detemines whether the four cards are a superset'''
-    if makeset(card1,card2).attributes == makeset(card3,card4).attributes\
-    or makeset(card2,card3).attributes == makeset(card1,card4).attributes\
-    or makeset(card1,card3).attributes == makeset(card2,card4).attributes:
-        return True
-    return False
-       
-
-def settype((card1,card2,card3)):
-    '''a function to determine the number of differences in a given set'''
-    assert isset(card1,card2,card3) is True
-    numdiffs=0
-    for i in range(len(card1.attributes)):
-        if card1.attributes[i]!=card2.attributes[i]:
-            numdiffs+=1
-    return numdiffs
-    
-'''TODO: find a way to generate these on demand (lazy) instead of writing them as seperate functions'''
-
-def twodmastercardlist():
-    '''creates a list of all nine two-dimensional cards'''
-    mastercardlist=[]
-    for i in range(3):
-        for j in range(3):
-            mastercardlist.append(card((i,j)))
-    return mastercardlist
-
-  
-    
-def threedmastercardlist():
-    '''list of all 27 three d cards'''
-    threedmastercardlist=[]
-    for i in range(3):
-        for j in range(3):
-            for t in range(3):
-            
-                threedmastercardlist+=[card((i,j,t)),]
-    return threedmastercardlist
-
-def fourdmastercardlist():
-    '''list of all 81 4-d cards, for a standard game'''
-    fourdmastercardlist=[]
-    for i in range(3):
-            for j in range(3):
-                for t in range(3):
-                    for n in range(3):
-                        fourdmastercardlist+=[card((n,t,j,i)),]
-    #random.shuffle(fourdmastercardtuple)
-    return fourdmastercardlist
-
-
-def cardmapping(card):
-    '''converts each card to a number 0-80'''
-    cardsum = 0
-    for i in xrange(len(card.attributes)):
-        cardsum += card.attributes[i] * (3 ** i)
-    return cardsum
-
-def reversecardmapping(num):
-    '''do this better!!'''
-    att3 = num/27
-    att2 = (num - 27) / 9
-    att1 = (num - 27 - 9) / 3
-    att0 = (num - 27 - 9 - 3) 
-    return card([att0,att1,att2,att3])
-
-## build the image list mapping for the web game
-'''TODO: Have each card be able to get its own image src'''
-def print_src_list():
-    src_list=[]
-    for card in fourdmastercardlist():
-            src_list.append(cardmapping(card))
-            
-    return src_list
 
 ##print print_src_list()
 
-def threecardcombos(numcardsonboard):
-    '''returns list of tuples for all possible threecard combinations given a number of cards, where each tuple is a possible combination of three cards
-    numcardsonboard=int
-    returns: list of tuples'''
-    listofthreecardcombos=[]
-    for i in range(numcardsonboard-2):
-        for j in range(i+1,numcardsonboard-1):
-            for k in range(j+1,numcardsonboard):
-                listofthreecardcombos.append((i,j,k))
-    return listofthreecardcombos
 
-
-def fourcardcombos(numcards):
-    '''samesies for four cards. we'll want this for superset'''
-    listoffourcardcombos=[]
-    for i in range(numcards-3):
-        for j in range(i+1,numcards-2):
-            for k in range(j+1,numcards-1):
-                for t in range(k+1,numcards):
-                    listoffourcardcombos.append((i,j,k,t))
-    return listoffourcardcombos
-
-def getDimensionList(dims):
-    if dims == 2:
-        return twodmastercardlist()
-    elif dims == 3:
-        return threedmastercardlist()
-    elif dims == 4:
-        return fourdmastercardlist()
-    else:
-        return False
+def get_dimension_list(dims):
+    return master_list(dims, ()) 
 
 
 class board(object):
@@ -165,7 +37,7 @@ class board(object):
         self.cardsonboard = [] if cardsonboard == None else cardsonboard
         self.cardsremoved = [] if cardsremoved == None else cardsremoved
         self.dimension = dimension
-        self.mastercardlist = getDimensionList(dimension)
+        self.mastercardlist = get_dimension_list(dimension)
         ## shuffle the cardlist at the beginning of each game
         self.cardlist = self.mastercardlist[:]
 
