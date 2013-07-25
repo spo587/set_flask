@@ -20,13 +20,22 @@ def dimensions():
 
 @set_app.route('/setpage',methods=['GET','POST'])
 def setpage():
+    numrefreshes = 0
+    board1 = sad.board(4)
+    board1.dealcards(12)
+    list_cards = ["/static/{}.JPG".format(sad.cardmapping(card))\
+     for card in board1.cardsonboard]
+    num1 = board1.numsetsonboard()
     if request.method == 'GET':
-        board1 = sad.board(4)
-        board1.dealcards(12)
-        list_cards = ["/static/{}.JPG".format(sad.cardmapping(card))\
-         for card in board1.cardsonboard]
-        num1 = board1.numsetsonboard()
-        return render_template('setpage.html',l=list_cards,num=num1)
+        return render_template('setpage.html',l=list_cards,num='to be revealed')
+    elif request.method == 'POST':
+        numrefreshes += 1
+        if numrefreshes < 3:
+
+            return render_template('setpage.html',l=list_cards,num=num1,)
+        else:
+            return render_template('menupage.html')
+
 
 
 
