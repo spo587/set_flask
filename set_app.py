@@ -1,5 +1,7 @@
 from flask import Flask,render_template,request,redirect
 import set_any_dimension as sad
+import card_functions_set as cfs
+import web_render_set as wrs
 set_app = Flask(__name__)
 
 @set_app.route('/menu',methods=['GET','POST'])
@@ -18,23 +20,23 @@ def dimensions():
         return redirect('/setpage')
 
 
+BOARD = sad.board(4)
+
 @set_app.route('/setpage',methods=['GET','POST'])
 def setpage():
-    numrefreshes = 0
-    board1 = sad.board(4)
-    board1.dealcards(12)
-    list_cards = ["/static/{}.JPG".format(sad.cardmapping(card))\
-     for card in board1.cardsonboard]
-    num1 = board1.numsetsonboard()
+    
     if request.method == 'GET':
-        return render_template('setpage.html',l=list_cards,num='to be revealed')
+        BOARD.clearboard()
+        BOARD.dealcards(12)
+        list_cards = ["/static/{}.JPG".format(wrs.cardmapping(card))\
+            for card in BOARD.cardsonboard]
+        return render_template('setpage.html',l=list_cards,num='')
     elif request.method == 'POST':
-        numrefreshes += 1
-        if numrefreshes < 3:
+        list_cards = ["/static/{}.JPG".format(wrs.cardmapping(card))\
+            for card in BOARD.cardsonboard]
+        num1 = BOARD.numsetsonboard()
+        return render_template('setpage.html',l=list_cards,num=num1,)
 
-            return render_template('setpage.html',l=list_cards,num=num1,)
-        else:
-            return render_template('menupage.html')
 
 
 

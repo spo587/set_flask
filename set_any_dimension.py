@@ -9,6 +9,28 @@ import card_functions_set as c
 #TODO: find a way to generate these on demand (lazy) instead of writing them as seperate functions
 
 
+def threecardcombos(numcardsonboard):
+    '''returns list of tuples for all possible threecard combinations given a number of cards, where each tuple is a possible combination of three cards
+    numcardsonboard=int
+    returns: list of tuples'''
+    listofthreecardcombos=[]
+    for i in range(numcardsonboard-2):
+        for j in range(i+1,numcardsonboard-1):
+            for k in range(j+1,numcardsonboard):
+                listofthreecardcombos.append((i,j,k))
+    return listofthreecardcombos
+
+
+def fourcardcombos(numcards):
+    '''samesies for four cards. we'll want this for superset'''
+    listoffourcardcombos=[]
+    for i in range(numcards-3):
+        for j in range(i+1,numcards-2):
+            for k in range(j+1,numcards-1):
+                for t in range(k+1,numcards):
+                    listoffourcardcombos.append((i,j,k,t))
+    return listoffourcardcombos
+
 
 def master_list(dim, indices):
     former_indices = indices
@@ -109,7 +131,7 @@ class board(object):
     def numsetsonboard(self):
         ans=0
         for t in threecardcombos(len(self.cardsonboard)):
-            if isset(self.cardsonboard[t[0]],self.cardsonboard[t[1]],self.cardsonboard[t[2]]):
+            if c.isset(self.cardsonboard[t[0]],self.cardsonboard[t[1]],self.cardsonboard[t[2]]):
                 ans+=1
         return ans
     ## this might be unnecessary
@@ -118,7 +140,7 @@ class board(object):
         '''specifies all the sets on the board'''
         listofsets = []
         for t in threecardcombos(len(self.cardsonboard)):
-            if isset(self.cardsonboard[t[0]],self.cardsonboard[t[1]],self.cardsonboard[t[2]]):
+            if c.isset(self.cardsonboard[t[0]],self.cardsonboard[t[1]],self.cardsonboard[t[2]]):
                 # print 'set!'
                 #                                                 print self.cardsonboard[t[0]].attributes
                 #                                                 print self.cardsonboard[t[1]].attributes
@@ -130,7 +152,7 @@ class board(object):
         listofsupersets = []
         for t in fourcardcombos(len(self.cardsonboard)):
             
-            if issuperset(self.cardsonboard[t[0]],self.cardsonboard[t[1]],self.cardsonboard[t[2]],self.cardsonboard[t[3]]):
+            if c.issuperset(self.cardsonboard[t[0]],self.cardsonboard[t[1]],self.cardsonboard[t[2]],self.cardsonboard[t[3]]):
                 
                 listofsupersets += [cardmapping(self.cardsonboard[t[0]]),cardmapping(self.cardsonboard[t[1]]),cardmapping(self.cardsonboard[t[2]]),cardmapping(self.cardsonboard[t[3]]),]
         return listofsupersets
