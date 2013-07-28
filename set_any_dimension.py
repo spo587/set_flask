@@ -1,6 +1,8 @@
 import math
 import random
 import card_functions_set as c
+import web_render_set as w
+import itertools
 
 
 ## this is set up to play setgames of different types corresponding to different numbers of card attributes or different 'dimensions'
@@ -8,28 +10,36 @@ import card_functions_set as c
     
 #TODO: find a way to generate these on demand (lazy) instead of writing them as seperate functions
 
+# print combinations(4,2)
+# def threecardcombos(numcardsonboard):
+#     '''returns list of tuples for all possible threecard combinations given a number of cards, where each tuple is a possible combination of three cards
+#     numcardsonboard=int
+#     returns: list of tuples'''
+#     listofthreecardcombos=[]
+#     for i in range(numcardsonboard-2):
+#         for j in range(i+1,numcardsonboard-1):
+#             for k in range(j+1,numcardsonboard):
+#                 listofthreecardcombos.append((i,j,k))
+#     return listofthreecardcombos
 
-def threecardcombos(numcardsonboard):
-    '''returns list of tuples for all possible threecard combinations given a number of cards, where each tuple is a possible combination of three cards
-    numcardsonboard=int
-    returns: list of tuples'''
-    listofthreecardcombos=[]
-    for i in range(numcardsonboard-2):
-        for j in range(i+1,numcardsonboard-1):
-            for k in range(j+1,numcardsonboard):
-                listofthreecardcombos.append((i,j,k))
-    return listofthreecardcombos
+
+# def fourcardcombos(numcards):
+#     '''samesies for four cards. we'll want this for superset'''
+#     listoffourcardcombos=[]
+#     for i in range(numcards-3):
+#         for j in range(i+1,numcards-2):
+#             for k in range(j+1,numcards-1):
+#                 for t in range(k+1,numcards):
+#                     listoffourcardcombos.append((i,j,k,t))
+#     return listoffourcardcombos
 
 
-def fourcardcombos(numcards):
-    '''samesies for four cards. we'll want this for superset'''
-    listoffourcardcombos=[]
-    for i in range(numcards-3):
-        for j in range(i+1,numcards-2):
-            for k in range(j+1,numcards-1):
-                for t in range(k+1,numcards):
-                    listoffourcardcombos.append((i,j,k,t))
-    return listoffourcardcombos
+# def cardcombos(num,numcards):
+
+#     if num == 1:
+#         return [(i,) for i in range(numcards)]
+#     else:
+
 
 
 def master_list(dim, indices):
@@ -37,10 +47,15 @@ def master_list(dim, indices):
     ret = []
     for i in range(3):
         indices = former_indices + (i,)
+        #print 'modified indices ', indices
         if dim == 1:
             ret += [c.Card(indices)]
+            #print 'modified ret for dim == 1', [elem.attributes for elem in ret]
         else:
             ret += master_list(dim-1, indices)
+            #print 'modified ret, dim != 1', [elem.attributes for elem in ret]
+            #print 'indices being passed to next level ', indices
+    #print 'final ret to be returned', [elem.attributes for elem in ret]
     return ret
 
 
@@ -130,7 +145,7 @@ class board(object):
     ## find the number of sets on the board (without removal)
     def numsetsonboard(self):
         ans=0
-        for t in threecardcombos(len(self.cardsonboard)):
+        for t in [elem for elem in itertools.combinations(range(len(self.cardsonboard)),3)]:
             if c.isset(self.cardsonboard[t[0]],self.cardsonboard[t[1]],self.cardsonboard[t[2]]):
                 ans+=1
         return ans
@@ -139,22 +154,22 @@ class board(object):
     def printsetsonboard(self):
         '''specifies all the sets on the board'''
         listofsets = []
-        for t in threecardcombos(len(self.cardsonboard)):
+        for t in [elem for elem in itertools.combinations(range(len(self.cardsonboard)),3)]:
             if c.isset(self.cardsonboard[t[0]],self.cardsonboard[t[1]],self.cardsonboard[t[2]]):
                 # print 'set!'
                 #                                                 print self.cardsonboard[t[0]].attributes
                 #                                                 print self.cardsonboard[t[1]].attributes
                 #                                                 print self.cardsonboard[t[2]].attributes
-                listofsets += [cardmapping(self.cardsonboard[t[0]]),cardmapping(self.cardsonboard[t[1]]),cardmapping(self.cardsonboard[t[2]]),]
+                listofsets += [w.cardmapping(self.cardsonboard[t[0]]),w.cardmapping(self.cardsonboard[t[1]]),w.cardmapping(self.cardsonboard[t[2]]),]
         return listofsets
     
     def printsupersetsonboard(self):
         listofsupersets = []
-        for t in fourcardcombos(len(self.cardsonboard)):
+        for t in [elem for elem in itertools.combinations(range(len(self.cardsonboard)),4)]:
             
             if c.issuperset(self.cardsonboard[t[0]],self.cardsonboard[t[1]],self.cardsonboard[t[2]],self.cardsonboard[t[3]]):
                 
-                listofsupersets += [cardmapping(self.cardsonboard[t[0]]),cardmapping(self.cardsonboard[t[1]]),cardmapping(self.cardsonboard[t[2]]),cardmapping(self.cardsonboard[t[3]]),]
+                listofsupersets += [w.cardmapping(self.cardsonboard[t[0]]),w.cardmapping(self.cardsonboard[t[1]]),w.cardmapping(self.cardsonboard[t[2]]),w.cardmapping(self.cardsonboard[t[3]]),]
         return listofsupersets
 
     ## what cards are on the current board
