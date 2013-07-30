@@ -28,14 +28,21 @@ def setpage():
     if request.method == 'GET':
         BOARD.clearboard()
         BOARD.dealcards(12)
+        list_sets = ['' for i in range(12)]
         list_cards = ["/static/{}.JPG".format(wrs.cardmapping(card))\
             for card in BOARD.cardsonboard]
-        return render_template('setpage.html',l=list_cards,num='')
+        return render_template('setpage.html',l=list_cards,num='',l2=list_sets)
     elif request.method == 'POST':
         list_cards = ["/static/{}.JPG".format(wrs.cardmapping(card))\
             for card in BOARD.cardsonboard]
         num1 = BOARD.numsetsonboard()
-        return render_template('setpage.html',l=list_cards,num=num1,)
+        sets = BOARD.printsetsonboard()
+        if len(sets) > 0:
+            list_sets = ["static/{}.JPG".format(card) for card in sets]
+        else:
+            list_sets = ['']
+        print list_sets
+        return render_template('setpage.html',l=list_cards,num=num1,l2=list_sets)
 
 
 
