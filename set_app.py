@@ -4,6 +4,8 @@ import card_functions_set as cfs
 import web_render_set as wrs
 set_app = Flask(__name__)
 
+img_name_dict = {"/static/{}.JPG".format(wrs.cardmapping(card)):wrs.cardmapping(card) for card in sad.get_dimension_list(4)}
+
 @set_app.route('/menu',methods=['GET','POST'])
 def whatever():
     if request.method == 'GET':
