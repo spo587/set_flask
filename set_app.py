@@ -31,9 +31,10 @@ def setpage():
         BOARD.clearboard()
         BOARD.dealcards(12)
         list_sets = ['' for i in range(12)]
-        list_cards = ["/static/{}.JPG".format(wrs.cardmapping(card))\
-            for card in BOARD.cardsonboard]
-        return render_template('setpage.html',l=list_cards,num='',l2=list_sets)
+        card_nums = [str(wrs.cardmapping(card)) for card in BOARD.cardsonboard]
+        list_cards = ["/static/{}.JPG".format(card_num) for card_num in card_nums]
+        return render_template('setpage.html',l=list_cards,num='', cn=card_nums)
+
     elif request.method == 'POST':
         list_cards = ["/static/{}.JPG".format(wrs.cardmapping(card))\
             for card in BOARD.cardsonboard]
@@ -44,7 +45,7 @@ def setpage():
         else:
             list_sets = ['']
         print list_sets
-        return render_template('setpage.html',l=list_cards,num=num1,l2=list_sets)
+        return render_template('setpage.html',l=list_cards,num=num1, cn=card_nums)
 
 
 
